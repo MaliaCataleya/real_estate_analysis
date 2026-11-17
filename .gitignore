@@ -1,5 +1,7 @@
 todo.txt
 .DS_Store
 etl_pipeline/data/
-etl_pipeline/test.csv
+*.csv
 .env
+__pycache__/
+backend/node_modules/

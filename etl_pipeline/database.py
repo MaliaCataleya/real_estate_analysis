@@ -10,7 +10,7 @@ db_user = os.getenv('POSTGRES_USER')
 db_password = os.getenv('POSTGRES_PASSWORD')
 db_name = os.getenv('POSTGRES_DB')
 
-engine = create_engine(f"postgresql+psycopg://{db_user}:{db_password}@127.0.0.1:5432/{db_name}", echo=True)
+engine = create_engine(f"postgresql+psycopg://{db_user}:{db_password}@postgres:5432/{db_name}", echo=True)
 
 metadata_obj = MetaData()
 
@@ -56,12 +56,12 @@ def save_to_database(filename):
         Column("rps32", BigInteger)
     )
 
-    """ with engine.begin() as conn:
-        conn.execute(text("DROP TABLE IF EXISTS new_taipei CASCADE")) """
+    with engine.begin() as conn:
+        conn.execute(text("DROP TABLE IF EXISTS new_taipei CASCADE"))
 
     metadata_obj.create_all(engine)
 
-    with open(f"./{filename}.csv", "r", encoding="utf-8", newline="") as f:
+    with open(f"/app/data/{filename}.csv", "r", encoding="utf-8", newline="") as f:
         connection = engine.raw_connection()
 
         try:
@@ -89,7 +89,7 @@ def save_to_database(filename):
                         copy.write(chunk)
 
             connection.commit()
-            print("CSV erfolgreich importiert!")
+            print("CSV successfully imported!")
 
         except Exception:
             connection.rollback()

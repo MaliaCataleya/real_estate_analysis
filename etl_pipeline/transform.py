@@ -8,7 +8,7 @@ def replace_missing_values(df, target_col, col1, col2):
     return df
 
 def transform_data(filename):
-    df = pandas.read_csv(f'./data/{filename}')
+    df = pandas.read_csv(f'/app/data/{filename}')
 
     df.dropna(subset=['rps27', 'rps21_amountsunitdollars'], inplace=True)
     df.drop(df[df['rps03_area'] == 0].index,inplace=True)
@@ -21,6 +21,6 @@ def transform_data(filename):
     df['rps32'] = df['rps32'].astype(int)
     df['rps22_amountsunitdollars'] = df['rps22_amountsunitdollars'].astype(int)
 
-    if not Path(f"./{filename}").exists():
-        df.to_csv(f'{filename}.csv')
+    if not Path(f"/app/data/{filename}.csv").exists():
+        df.to_csv(f'/app/data/{filename}.csv')
 

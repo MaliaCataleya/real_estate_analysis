@@ -3,6 +3,9 @@ import requests
 import re
 from urllib.request import urlretrieve
 from pathlib import Path
+import os
+
+os.makedirs("/app/data", exist_ok=True)
 
 def getHTMLdocument(url):
     response = requests.get(url)
@@ -24,11 +27,11 @@ def download_data():
         for dataset in datasets:
             filename = re.findall("(?<=https://data.ntpc.gov.tw/api/datasets/).*?(?=/csv/file)", dataset)[0]
 
-            if not Path(f"./data/{filename}").exists():
+            if not Path(f"/app/data/{filename}").exists():
                 query_parameters = {"downloadformat": "csv"}
                 response = requests.get(dataset, params=query_parameters)
 
-                with open(f"./data/{filename}", mode="wb") as file:
+                with open(f"/app/data/{filename}", mode="wb") as file:
                     file.write(response.content)
 
             return filename

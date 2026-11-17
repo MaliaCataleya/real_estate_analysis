@@ -9,5 +9,7 @@ def main():
 
     save_to_database(filename)
 
+    print("ETL Pipeline completed!")
+
 if __name__ == "__main__":
     main()

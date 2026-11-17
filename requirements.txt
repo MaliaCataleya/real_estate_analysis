@@ -3,3 +3,4 @@ requests
 re
 lxml
 wget
+dotenv

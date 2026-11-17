@@ -1,0 +1,8 @@
+beautifulsoup4
+requests
+lxml
+wget
+dotenv
+pandas
+sqlalchemy
+psycopg
