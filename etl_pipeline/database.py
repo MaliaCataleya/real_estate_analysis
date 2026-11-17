@@ -1,70 +1,100 @@
-from sqlalchemy import create_engine
-from sqlalchemy import text
-from sqlalchemy.orm import Session
-from sqlalchemy import MetaData
-from sqlalchemy import Table, Column, Integer, String, Float
-from sqlalchemy import ForeignKey
 
-#TODO: mit postgres ersetzen
-engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+from sqlalchemy import create_engine, MetaData, text
+from sqlalchemy import Table, Column, BigInteger, Text, Float
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+db_user = os.getenv('POSTGRES_USER')
+db_password = os.getenv('POSTGRES_PASSWORD')
+db_name = os.getenv('POSTGRES_DB')
+
+engine = create_engine(f"postgresql+psycopg://{db_user}:{db_password}@127.0.0.1:5432/{db_name}", echo=True)
+
 metadata_obj = MetaData()
 
-""" user_table = Table(
-    "user_account",
-    metadata_obj,
-    Column("id", Integer, primary_key=True),
-    Column("name", String(30)),
-    Column("user_id", ForeignKey("user_account.id"), nullable=False),
-    Column("fullname", String)) """
 
-building_table = Table(
-    "new_taipei",
-    metadata_obj,
-    Column("id", Integer, primary_key=True),  #TODO: automatisch erstellen lassen
-    Column("district", String(30)),
-    Column("rps01", String(256)),
-    Column("rps02", String(256)),
-    Column("rps03_area", Float(2)),
-    Column("rps04", String(30)),
-    Column("rps05", String(30)),
-    Column("rps06", String(30)), 
-    Column("rps07_yyymmddroc", Integer),
-    Column("rps08", String(256)),
-    Column("rps09", String(30)),
-    Column("rps10", String(30)),
-    Column("rps11", String(256)),
-    Column("rps12", String(30)),
-    Column("rps13", String(256)),
-    Column("rps14_yyymmddroc", Integer),
-    Column("rps15_area", Float(2)),
-    Column("rps16_quantity", Integer),
-    Column("rps17_quantity", Integer),
-    Column("rps18_quantity", Integer),
-    Column("rps19", String(30)),
-    Column("rps20", String(30)),
-    Column("rps21_amountsunitdollars", Integer),
-    Column("rps22_amountsunitdollars", Integer),
-    Column("rps23", String(30)),
-    Column("rps24_area", Float(2)),
-    Column("rps25_amountsunitdollars", Integer),
-    Column("rps26", String(256)),
-    Column("rps27", String(256)),
-    Column("rps28_area", Float(2)),
-    Column("rps29_area", Float(2)),
-    Column("rps30_area", Float(2)),
-    Column("rps31", String(30)),
-    Column("rps32", Integer)
-)
+def save_to_database(filename):
 
-metadata_obj.create_all(engine)
+    building_table = Table(
+        "new_taipei",
+        metadata_obj,
+        Column("id", BigInteger, primary_key=True, autoincrement=True),
+        Column("district", Text),
+        Column("rps01", Text),
+        Column("rps02", Text),
+        Column("rps03_area", Float),
+        Column("rps04", Text),
+        Column("rps05", Text),
+        Column("rps06", Text),
+        Column("rps07_yyymmddroc", BigInteger),
+        Column("rps08", Text),
+        Column("rps09", Text),
+        Column("rps10", Text),
+        Column("rps11", Text),
+        Column("rps12", Text),
+        Column("rps13", Text),
+        Column("rps14_yyymmddroc", BigInteger),
+        Column("rps15_area", Float),
+        Column("rps16_quantity", BigInteger),
+        Column("rps17_quantity", BigInteger),
+        Column("rps18_quantity", BigInteger),
+        Column("rps19", Text),
+        Column("rps20", Text),
+        Column("rps21_amountsunitdollars", BigInteger),
+        Column("rps22_amountsunitdollars", BigInteger),
+        Column("rps23", Text),
+        Column("rps24_area", Float),
+        Column("rps25_amountsunitdollars", BigInteger),
+        Column("rps26", Text),
+        Column("rps27", Text),
+        Column("rps28_area", Float),
+        Column("rps29_area", Float),
+        Column("rps30_area", Float),
+        Column("rps31", Text),
+        Column("rps32", BigInteger)
+    )
 
+    """ with engine.begin() as conn:
+        conn.execute(text("DROP TABLE IF EXISTS new_taipei CASCADE")) """
 
+    metadata_obj.create_all(engine)
 
+    with open(f"./{filename}.csv", "r", encoding="utf-8", newline="") as f:
+        connection = engine.raw_connection()
 
-""" stmt = text("SELECT x, y FROM some_table WHERE y > :y ORDER BY x, y")
-with Session(engine) as session:
-    session.execute(text("CREATE TABLE some_table (x int, y int)"))
-    result = session.execute(stmt, {"y": 6})
-    for row in result:
-        print(f"x: {row.x}  y: {row.y}")
-    session.commit() """
+        try:
+            with connection.cursor() as cursor:
+
+                cmd = """
+                    COPY new_taipei (
+                        id, district, rps01, rps02, rps03_area,
+                        rps04, rps05, rps06, rps07_yyymmddroc,
+                        rps08, rps09, rps10, rps11, rps12,
+                        rps13, rps14_yyymmddroc, rps15_area,
+                        rps16_quantity, rps17_quantity, rps18_quantity,
+                        rps19, rps20, rps21_amountsunitdollars,
+                        rps22_amountsunitdollars, rps23, rps24_area,
+                        rps25_amountsunitdollars, rps26, rps27,
+                        rps28_area, rps29_area, rps30_area,
+                        rps31, rps32
+                    )
+                    FROM STDIN
+                    WITH (FORMAT CSV, HEADER TRUE)
+                """
+
+                with cursor.copy(cmd) as copy:
+                    while chunk := f.read(1024 * 1024):
+                        copy.write(chunk)
+
+            connection.commit()
+            print("CSV erfolgreich importiert!")
+
+        except Exception:
+            connection.rollback()
+            raise
+
+        finally:
+            connection.close()
+
