@@ -1,2 +1,4 @@
 todo.txt
 .DS_Store
+etl_pipeline/data/
+etl_pipeline/test.csv
