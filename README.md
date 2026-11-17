@@ -1,23 +1,67 @@
-# Real-Estate Analysis
+# Real Estate Analysis
 
-## The Idea 
+## Overview
 
-This is a sample project showcasing the incorporation of PostgreSQL, Pandas, React, Express.js and SQLAlchemy into a single project based on [past real-estate transaction data](https://pages.github.com/](https://data.gov.tw/dataset/139700) of New Taipei City, Taiwan.
+This project demonstrates how various technologies, including **PostgreSQL, Pandas, React, Express.js and SQLAlchemy** can be integrated into a single application.
 
-The idea is a simple WebApplication to support real-estate business decisions based on past transactions.
+The project is based on historical real-estate transaction data from **New Taipei City, Taiwan**, provided by [Taiwan's Open Data Platform](https://data.gov.tw/dataset/139700).
 
-The underlying data represents past real-estate deals containing information such as the size of the building, year it was built, the total cost and many more summing up to 32 data points.
+The goal is to develop a web application that supports real-estate investment and purchasing decisions by providing insights into historical property transactions.
 
-Basic business logic was implemented using a selection of these transaction features.
+## The Idea
 
-Upon clicking a pin on the map, further details appear providing information about the mean transaction in the respective district.
+The application processes historical real-estate transactions containing up to 32 different data points, including building size, construction year, transaction price, and other property characteristics.
 
-This project is being actively developed and thus improved - especially regarding purchase decision evaluation.
+A basic **ETL pipeline** handles the data acquisition and preprocessing:
 
-## Get Started
+1. **Extract:** Download the underlying transaction data.
+2. **Transform:** Clean and preprocess the data using Python and Pandas.
+3. **Load:** Store the processed data in a PostgreSQL database.
 
-1. Make sure, Docker is installed
-2. Clone this Repo
-3. Please refer to `.env.example` and create a new `.env` file at the same location altering the value of `POSTGRES_PASSWORD`
-5. Run `docker compose up --build -d` 
-6. As soon as the etl_pipeline Container has finished, the WebApplication can be tested at localhost:5173 in the Browser
+The database is accessed through an **Express.js backend**, which handles requests from the React frontend.
+
+The frontend provides an interactive map of New Taipei City. By clicking on individual map markers, users can explore additional information about the respective districts, including average transaction characteristics and property prices.
+
+Basic business logic has been implemented using selected transaction features to provide an initial foundation for evaluating potential real-estate purchases.
+
+The project is actively being developed, with a particular focus on expanding the business logic and improving the evaluation of purchasing decisions.
+
+## Tech Stack
+
+- **Frontend:** React
+- **Backend:** Node.js, Express.js
+- **Database:** PostgreSQL
+- **Data Processing:** Python, Pandas, SQLAlchemy
+- **Infrastructure:** Docker, Docker Compose
+- **Mapping:** OpenLayers
+
+## Getting Started
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/) and Docker Compose
+
+### Installation
+
+1. Clone this repository:
+
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
+
+2. Create a `.env` file in the project root directory. Use `.env.example` as a reference and configure your database credentials - especially `POSTGRES_PASSWORD`
+
+3. Build and start the containers:
+
+   ```bash
+   docker compose up --build -d
+   ```
+
+4. Wait for the `etl_pipeline` container to finish processing and importing the data into PostgreSQL
+
+5. Open the application in your browser:
+
+   **http://localhost:5173**
+
+The application should now be up and running.
