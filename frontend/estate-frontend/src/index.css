@@ -1,95 +1,80 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --margin-standard: 36px;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
 body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
+  color: steelblue;
 }
 
-.main {
-  background-color: #f9f9f9;
+.textual {
+  color: black;
 }
 
-.content {
-  max-width: 1280px; /* remember to set width for map container for map to show up */
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 20px;
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.map-section {
+  min-width: 0;
 }
 
 .mapContainer {
   width: 100%;
-  margin: var(--margin-standard) auto;
-  position: relative;
+  margin: 0;
 }
 
 #map {
-  width: 100%;
-  height: 500px;
+  height: 650px;
 }
 
-.attribution {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 5px;
-  border-radius: 4px;
-  font-size: 0.8em;
+.statistics-section {
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
 }
 
-.ol-zoom {
-  position: absolute;
-  bottom: 35px;
-  right: 10px;
+.statistics-grid {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 16px;
 }
 
-h1 {
-  margin: var(--margin-standard) 0;
-  font-size: 3.2em;
-  line-height: 1.1;
+.stat-card {
+  background: #f8faf9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  padding: 20px;
+  box-shadow: none;
 }
 
-.ol-zoom button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: border-color 0.25s;
+.stat-card:hover {
+  transform: translateY(-2px);
 }
-.ol-zoom button:hover {
-  border-color: #646cff;
+
+.highlight-card {
+  background: var(--color-primary-light);
 }
-.ol-zoom button:focus,
-.ol-zoom button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+
+@media (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  #map {
+    height: 450px;
+  }
+
+  .statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
 }

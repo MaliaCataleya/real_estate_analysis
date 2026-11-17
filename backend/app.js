@@ -1,10 +1,18 @@
 const express = require('express');
 const { Pool } = require("pg");
-const pool = require("../database");
+const cors = require('cors');
 
+/* const path = require('path');
+require('dotenv').config({
+    path: path.resolve(__dirname, '../.env')
+}); */
 
 const app = express();
 const port = 3000;
+
+app.use(cors({
+    origin: 'http://localhost:5173'
+}));
 
 const pool = new Pool({
     host: process.env.POSTGRES_HOST,
@@ -14,21 +22,25 @@ const pool = new Pool({
     password: process.env.POSTGRES_PASSWORD
 });
 
+console.log("POSTGRES_HOST:", process.env.POSTGRES_HOST);
+console.log("POSTGRES_DB:", process.env.POSTGRES_DB);
+
 module.exports = pool;
 
-app.get("/", async (req, res) => {
+app.get('/api/locations/:id', async (req, res) => {
     try {
+        const locationId = req.params.id;
+
         const result = await pool.query(
-            "SELECT * FROM properties LIMIT 100"
+            'SELECT * FROM new_taipei WHERE district = $1',
+            [locationId]
         );
 
         res.json(result.rows);
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({
-            error: "Database error"
-        });
+        res.status(500).json({ error: 'Error: Location details could not be queried!' });
     }
 });
 
